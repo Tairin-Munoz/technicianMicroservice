@@ -1,0 +1,15 @@
+﻿.vs/
+.idea/
+.vscode/
+bin/
+obj/
+**/bin/
+**/obj/
+TestResults/
+*.user
+*.suo
+*.cache
+*.log
+**/obj/**/EndpointInfo/*.json
+appsettings.Development.json
+appsettings.Local.json
