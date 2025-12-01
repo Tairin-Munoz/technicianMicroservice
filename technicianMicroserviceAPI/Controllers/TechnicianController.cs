@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using technicianMicroservice.Application.Services;
+using technicianMicroservice.Domain.Entities;
 using technicianMicroservice.Domain.Services;
 using technicianMicroservice.DTOs;
 
@@ -22,12 +23,12 @@ public class TechnicianController : ControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpPost("insert")]
+    [HttpPost("create")]
     [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Insert(
         [FromBody] CreateTechnicianDto dto,
-        [FromHeader(Name = "User-Id")] int userId)
+        [FromHeader] int userId)
     {
         var tech = new technicianMicroservice.Domain.Entities.Technician
         {
@@ -72,7 +73,7 @@ public class TechnicianController : ControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(technicianMicroservice.Domain.Entities.Technician), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -84,31 +85,17 @@ public class TechnicianController : ControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpPut("{id}")]
+    [HttpPut()]
     [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
-        int id,[FromBody] UpdateTechnicianDto dto,[FromHeader(Name = "User-Id")] int userId)
+        [FromBody] Technician technician,[FromHeader] int userId)
     {
-        var existing = await _technicianService.GetById(id);
-        if (existing is null) return NotFound(new { message = $"Técnico con ID {id} no encontrado" });
+        var existing = await _technicianService.GetById(technician.Id);
+        if (existing is null) return NotFound(new { message = $"Técnico con ID {technician.Id} no encontrado" });
 
-        var tech = new technicianMicroservice.Domain.Entities.Technician
-        {
-            Id = id,
-            Name = dto.Name,
-            FirstLastName = dto.FirstLastName,
-            SecondLastName = dto.SecondLastName,
-            PhoneNumber = dto.PhoneNumber,
-            Email = dto.Email,
-            DocumentNumber = dto.DocumentNumber,
-            DocumentExtension = dto.DocumentExtension,
-            Address = dto.Address,
-            BaseSalary = dto.BaseSalary
-        };
-
-        var validation = _validator.Validate(tech);
+        var validation = _validator.Validate(technician);
         if (validation.IsFailure)
         {
             return BadRequest(new ValidationErrorResponse
@@ -118,14 +105,14 @@ public class TechnicianController : ControllerBase
             });
         }
 
-        var ok = await _technicianService.Update(tech, userId);
+        var ok = await _technicianService.Update(technician, userId);
         if (!ok) return StatusCode(500, new { message = "Error al actualizar el técnico" });
 
-        return Ok(new SuccessResponse { Message = "Técnico actualizado exitosamente", Id = id });
+        return Ok(new SuccessResponse { Message = "Técnico actualizado exitosamente", Id = technician.Id });
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
