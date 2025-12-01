@@ -19,7 +19,7 @@ builder.Services.AddScoped<ITechnicianRepository, TechnicianRepository>();
 builder.Services.AddScoped<TechnicianService>();
 builder.Services.AddScoped<IDbConnectionFactory, PostgreSqlConnection>();
 
-// Inyección de Validadores
+// Inyecciï¿½n de Validadores
 builder.Services.AddScoped<IValidator<technicianMicroservice.Domain.Entities.Technician>, TechnicianValidator>();
 
 
@@ -41,8 +41,8 @@ builder.Services.AddAuthentication(options =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
+            ValidIssuer = jwtSettings["ValidIssuer"],
+            ValidAudience = jwtSettings["ValidAudience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
         };
     });
