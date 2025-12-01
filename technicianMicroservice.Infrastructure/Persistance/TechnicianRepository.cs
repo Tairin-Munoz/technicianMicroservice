@@ -62,7 +62,6 @@ namespace technicianMicroservice.Infrastructure.Persistance
             };
 
             var newId = await connection.ExecuteScalarAsync<int>(query, parameters);
-            technician.Id = newId;
             return newId > 0;
         }
 
