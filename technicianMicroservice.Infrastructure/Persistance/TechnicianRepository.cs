@@ -81,7 +81,6 @@ namespace technicianMicroservice.Infrastructure.Persistance
                     @document_extension,
                     @address,
                     @base_salary,
-                    @is_active,
                     @modified_by_user_id
                 )";
 
@@ -97,7 +96,6 @@ namespace technicianMicroservice.Infrastructure.Persistance
                 document_extension = technician.DocumentExtension,
                 address = technician.Address,
                 base_salary = technician.BaseSalary,
-                is_active = technician.IsActive,
                 modified_by_user_id = userId
             };
 
